@@ -81,3 +81,41 @@ Davies Bouldin Index for 5  neighbours is 0.6601845416287746
 Davies Bouldin Index for 6  neighbours is 0.6451947320940435
 ```
 
+```python
+
+from sklearn import preprocessing
+dataset1_standardized = preprocessing.scale(df)
+dataset1_standardized = pd.DataFrame(dataset1_standardized)
+````
+
+```python
+plt.figure(figsize=(10, 8))
+from sklearn.cluster import KMeans
+wcss = []
+for i in range(1, 6):
+    kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+    kmeans.fit(dataset1_standardized)
+    wcss.append(kmeans.inertia_)
+plt.plot(range(1, 6), wcss)
+plt.title('KMeans')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+```
+![image](https://user-images.githubusercontent.com/61456930/82131539-2a664e80-97a4-11ea-9432-a12487b19a7e.PNG)
+
+```python
+kmeans = KMeans(n_clusters = 5, init = 'k-means++', random_state = 42)
+y_kmeans = kmeans.fit_predict(dataset1_standardized)
+#beginning of  the cluster numbering with 1 instead of 0
+y_kmeans1=y_kmeans
+y_kmeans1=y_kmeans+1
+# New Dataframe called cluster
+cluster = pd.DataFrame(y_kmeans1)
+# Adding cluster to the Dataset1
+df['cluster'] = cluster
+#Mean of clusters
+kmeans_mean_cluster = pd.DataFrame(round(df.groupby('cluster').mean(),1))
+kmeans_mean_cluster
+```
+![image](https://user-images.githubusercontent.com/61456930/82131561-6f8a8080-97a4-11ea-8240-4effcf1d361e.PNG)
