@@ -119,3 +119,54 @@ kmeans_mean_cluster = pd.DataFrame(round(df.groupby('cluster').mean(),1))
 kmeans_mean_cluster
 ```
 ![image](https://user-images.githubusercontent.com/61456930/82131561-6f8a8080-97a4-11ea-8240-4effcf1d361e.PNG)
+
+```python
+# Hierarchical clustering for the same dataset
+# creating a dataset for hierarchical clustering
+dataset2_standardized = dataset1_standardized
+# needed imports
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+import numpy as np
+# some setting for this notebook to actually show the graphs inline
+%matplotlib inline
+np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation
+#creating the linkage matrix
+H_cluster = linkage(dataset2_standardized,'ward')
+plt.title('Hierarchical Clustering Dendrogram (truncated)')
+plt.xlabel('sample index or (cluster size)')
+plt.ylabel('distance')
+dendrogram(
+    H_cluster,
+    truncate_mode='lastp',  # show only the last p merged clusters
+    p=5,  # show only the last p merged clusters
+    leaf_rotation=90.,
+    leaf_font_size=12.,
+    show_contracted=True,  # to get a distribution impression in truncated branches
+)
+plt.show()
+```
+![image](https://user-images.githubusercontent.com/61456930/82131675-a8772500-97a5-11ea-98ec-656198f50c54.PNG)
+
+```python
+# Assigning the clusters and plotting the observations as per hierarchical clustering
+from scipy.cluster.hierarchy import fcluster
+k=5
+cluster_2 = fcluster(H_cluster, k, criterion='maxclust')
+cluster_2[0:30:,]
+plt.figure(figsize=(10, 8))
+plt.scatter(dataset2_standardized.iloc[:,0], dataset2_standardized.iloc[:,1],c=cluster_2, cmap='prism')  # plot points with cluster dependent colors
+plt.title('Airline Data - Hierarchical Clutering')
+plt.show()
+```
+![image](https://user-images.githubusercontent.com/61456930/82131676-ae6d0600-97a5-11ea-8abb-b3b6773014fa.PNG)
+
+```python
+# New Dataframe called cluster
+cluster_Hierarchical = pd.DataFrame(cluster_2)
+# Adding the hierarchical clustering to dataset
+dataset2=df
+dataset2['cluster'] = cluster_Hierarchical
+dataset2.head()
+```
+![image](https://user-images.githubusercontent.com/61456930/82131677-b0cf6000-97a5-11ea-9924-4efb2a9d14f1.PNG)
